@@ -1,0 +1,394 @@
+# 2.4 Non-canonical peptide mapping tutorial
+
+This document outlines the code required for genome six-frame translation, mapping identified peptides to genome locations, and categorize peptides as intergenic, intragenic, non-canonical start or non-canonical stop sequence.
+
+\-
+
+\-
+
+#### Read in the required libraries
+
+```{r message=FALSE}
+
+######read in the libraries #####
+library(tidyverse)
+library(BiocManager)
+library(seqinr)
+library(Biostrings)
+```
+
+\-
+
+\-
+
+#### Define the function and variables to perform six-frame translations.
+
+```{r message=FALSE}
+six_frame_translate <- function(fasta_file = "",   #fasta file for converting
+                                genetic_code = 11, #genetic code for converting, 11 = bacteria, 1 = generic
+                                breaks = 9999,     #define as number of amino acids per accession, "stops" = cutting at stop codons, FALSE = no breaking
+                                overlap = 50,      #define the overlap between each of the accessions
+                                stops = TRUE)      #include the *'s in the final output or not? TRUE or FALSE
+                                
+                                
+  {
+  
+  #read in the fasta and convert
+  dna <- seqinr::read.fasta(fasta_file, as.string = TRUE, seqtype = "DNA", set.attributes = FALSE)
+  dna_unl <- unlist(dna)
+  dna_unl_paste <- paste(dna_unl, collapse = "")
+  dna2 <- s2c(dna_unl_paste)
+  
+  
+  #make the data frame to read into
+  final <- data.frame(row.names = c("f0", "f1", "f2", "r0", "r1", "r2"))
+  
+  #define the for loop for each of the forward and reverse strands for each reading frame
+  for (i in c(0, 1, 2)) {
+    f <- seqinr::translate(dna2, frame = i, sens = "F", numcode = genetic_code, NAstring = "X", ambiguous = TRUE)
+    r <- seqinr::translate(dna2, frame = i, sens = "R", numcode = genetic_code, NAstring = "X", ambiguous = TRUE)
+    
+    final$Sequence[i+1] <- paste(f, collapse = "")
+    final$Sequence[i+3] <- paste(r, collapse = "")
+  }
+  rnames <- rownames(final)
+  
+  if (breaks == FALSE){
+    
+    final2 <- final %>% rownames_to_column(var = "Accession")
+
+  } else if (breaks == "stops") {
+    
+    final2 <- data.frame()
+    
+    for (x in 1:6) {
+      temp <- as.data.frame(final[x,1])
+      names(temp)[1] <- paste0(rnames[x])
+      
+      
+      
+      nmax <- max(stringr::str_count(as.character(temp[1,1]), "\\*")) + 1
+      
+      temp2 <- temp %>% 
+        separate(rnames[x], 
+                 into = paste0(paste0(rnames[x]),"_", seq_len(nmax)),
+                 sep = "\\*",
+                 fill = "right") %>% 
+        gather(key = "Accession", value = "Sequence")
+      
+      final2 <- rbind(final2, temp2) %>% 
+        mutate_all(na_if,"") %>% 
+        drop_na()
+      
+    }
+    
+    
+  } else {
+    
+    #### repeating loops to break up sequences - 1
+    df1 <- data.frame()
+    nmax1 <- stringr::str_count(final[1,1])
+    div1 <- as.integer(nmax1/breaks)+1
+    
+    for (z in 1:div1) {
+      a <- substr(as.character(final[1,1]), (z*breaks)-breaks+1, (z*breaks)+overlap)
+      df1 <- rbind(df1, as.data.frame(a))
+    }
+    df1$Accession <- paste0(rnames[1], "_", seq_len(div1))
+    colnames(df1) <- c("Sequence", "Accession")
+    df1 <- df1 %>% 
+      select(Accession, Sequence)
+    
+    #### repeating loops to break up sequences - 2
+    df2 <- data.frame()
+    nmax2 <- stringr::str_count(final[2,1])
+    div2 <- as.integer(nmax2/breaks)+1
+    
+    for (z in 1:div2) {
+      a <- substr(as.character(final[1,1]), (z*breaks)-breaks+1, (z*breaks)+overlap)
+      df2 <- rbind(df2, as.data.frame(a))
+    }
+    df2$Accession <- paste0(rnames[2], "_", seq_len(div2))
+    colnames(df2) <- c("Sequence", "Accession")
+    df2 <- df2 %>% 
+      select(Accession, Sequence)
+    
+    #### repeating loops to break up sequences - 3
+    df3 <- data.frame()
+    nmax3 <- stringr::str_count(final[3,1])
+    div3 <- as.integer(nmax3/breaks)+1
+    
+    for (z in 1:div3) {
+      a <- substr(as.character(final[1,1]), (z*breaks)-breaks+1, (z*breaks)+overlap)
+      df3 <- rbind(df3, as.data.frame(a))
+    }
+    df3$Accession <- paste0(rnames[3], "_", seq_len(div3))
+    colnames(df3) <- c("Sequence", "Accession")
+    df3 <- df3 %>% 
+      select(Accession, Sequence)
+    
+    #### repeating loops to break up sequences - 4
+    df4 <- data.frame()
+    nmax4 <- stringr::str_count(final[4,1])
+    div4 <- as.integer(nmax4/breaks)+1
+    
+    for (z in 1:div4) {
+      a <- substr(as.character(final[1,1]), (z*breaks)-breaks+1, (z*breaks)+overlap)
+      df4 <- rbind(df4, as.data.frame(a))
+    }
+    df4$Accession <- paste0(rnames[4], "_", seq_len(div4))
+    colnames(df4) <- c("Sequence", "Accession")
+    df4 <- df4 %>% 
+      select(Accession, Sequence)
+    
+    #### repeating loops to break up sequences - 5
+    df5 <- data.frame()
+    nmax5 <- stringr::str_count(final[5,1])
+    div5 <- as.integer(nmax5/breaks)+1
+    
+    for (z in 1:div5) {
+      a <- substr(as.character(final[1,1]), (z*breaks)-breaks+1, (z*breaks)+overlap)
+      df5 <- rbind(df5, as.data.frame(a))
+    }
+    df5$Accession <- paste0(rnames[5], "_", seq_len(div5))
+    colnames(df5) <- c("Sequence", "Accession")
+    df5 <- df5 %>% 
+      select(Accession, Sequence)
+    
+    #### repeating loops to break up sequences - 6
+    df6 <- data.frame()
+    nmax6 <- stringr::str_count(final[6,1])
+    div6 <- as.integer(nmax6/breaks)+1
+    
+    for (z in 1:div6) {
+      a <- substr(as.character(final[1,1]), (z*breaks)-breaks+1, (z*breaks)+overlap)
+      df6 <- rbind(df6, as.data.frame(a))
+    }
+    df6$Accession <- paste0(rnames[6], "_", seq_len(div6))
+    colnames(df6) <- c("Sequence", "Accession")
+    df6 <- df6 %>% 
+      select(Accession, Sequence)
+    
+    ## combine the dataframes into final2
+    
+    final2 <- rbind(df1, df2, df3, df4, df5, df6)
+  }
+  
+  if (stops == TRUE){
+  return(final2)
+    
+  } else {
+    final2$Sequence <- gsub("\\*", "", final2$Sequence)
+    return(final2)
+    
+  }
+}
+```
+
+\-
+
+\-
+
+#### Use the six_frame_translation( ) function to make two databases
+
+```{r message=FALSE, warning=FALSE}
+sec_db <- six_frame_translate(fasta_file = "../genome_sample.fasta", 
+                                        genetic_code = 11,
+                                        breaks = 100,
+                                        overlap = 10,
+                                        stops = FALSE)
+
+full_db <- six_frame_translate(fasta_file = "../genome_sample.fasta",
+                           genetic_code = 11, 
+                           breaks = FALSE,
+                           overlap = 0,
+                           stops = TRUE)
+```
+
+\-
+
+\-
+
+#### Output the databases as fasta files
+
+```{r}
+##### write the fasta file from the data frame #####
+
+Xfasta <- character(nrow(sec_db) * 2)
+Xfasta[c(TRUE, FALSE)] <- paste0(">", sec_db$Accession)
+Xfasta[c(FALSE, TRUE)] <- sec_db$Sequence
+
+writeLines(Xfasta, "../sec_db.fasta")
+
+Xfasta2 <- character(nrow(full_db) * 2)
+Xfasta2[c(TRUE, FALSE)] <- paste0(">", full_db$Accession)
+Xfasta2[c(FALSE, TRUE)] <- full_db$Sequence
+
+writeLines(Xfasta2, "../full_db.fasta")
+```
+
+\-
+
+\-
+
+#### Install / load the rBLAST package
+
+```{r message=FALSE, warning=FALSE}
+#install.packages('rBLAST', repos = 'https://mhahsler.r-universe.dev')
+library(rBLAST)
+```
+
+\-
+
+\-
+
+#### Define the full translation as the BLAST database, read in the predicted proteins and identified peptides
+
+```{r message=FALSE, warning=FALSE}
+#make the full translation the BLAST database
+makeblastdb(file = "../full_db.fasta", dbtype = "prot")
+
+db <- blast(db = "../full_db.fasta", type = "blastp")
+
+#read in the protein sequences
+prot <- readAAStringSet("../protein_NCBI.fasta")
+
+#read in the peptide sequences
+IDs <- readAAStringSet("../pep_IDs.fasta")
+```
+
+\-
+
+\-
+
+```{r message=FALSE, warning=FALSE}
+##### define the functions #####
+
+##### define the function to map peptides and proteins to the global translation #####
+blast_map <- function(database = db,
+                      proteins = prot,
+                      peptides = pep)
+{
+  #define the output dataframe
+  df <- data.frame()
+  
+  #map the proteins to the database
+  for (i in 1:length(proteins)) {
+    
+    temp <- predict(database, proteins[i]) %>% 
+      as.data.frame()
+    
+    if (dim(temp)[1] == 0) {
+      temp[nrow(temp)+1, ] <- NA
+      
+    }
+    
+    temp$QueryID <- paste(names(proteins[i]))
+    temp$QuerySeq <- paste(proteins[i])
+    temp$Dataset <- "NCBI"
+    
+    df <- rbind(df, temp[1,])
+  }
+  
+  # map the peptides to the database
+  for (x in 1:length(peptides)) {
+    
+    temp <- predict(database, peptides[x]) %>% 
+      as.data.frame()
+    
+    if (dim(temp)[1] == 0) {
+      temp[nrow(temp)+1, ] <- NA
+      
+    }
+    
+    temp$QueryID <- paste(names(peptides[x]))
+    temp$QuerySeq <- paste(peptides[x])
+    temp$Dataset <- "Identified"
+    
+    df <- rbind(df, temp[1,])
+  }
+  return(df)
+}
+
+
+
+
+
+###### define the function to categorize the peptides into canonical or non-canonical groups #####
+blast_categorize <- function(data = df)
+{
+  
+  temp <- data.frame()
+  
+  pep <- data %>% 
+    filter(Dataset == "Identified") %>% 
+    drop_na()
+  
+  pred <- data %>% 
+    filter(Dataset == "NCBI")
+  
+  for (z in 1:dim(pep)[1]) {
+    t <- pep[z,]
+    
+    p <- pred %>% 
+      arrange(send) %>% 
+      filter(., sseqid == as.character(t$sseqid)) %>% 
+      filter(., send >= t$sstart) %>% 
+      dplyr::slice(n = 1)
+    
+    if (dim(p)[1] < 1){
+      t$Peptide_map <- "Intergenic"
+    } else if (t$sstart < p$sstart & t$send < p$sstart) {
+      t$Peptide_map <- "Intergenic"
+    } else if (t$sstart < p$sstart & t$send > p$sstart){
+      t$Peptide_map <- "ncStart"
+    } else if (t$sstart >= p$sstart & t$send < p$send){
+      t$Peptide_map <- "Intragenic"
+    } else if (t$sstart < p$send & t$send > p$send) {
+      t$Peptide_map <- "ncStop"
+    } else if (t$sstart < p$sstart & t$send > p$send){
+      t$Peptide_map <- "Extended prediction"
+    } else {
+      t$Peptide_map <- "Check"
+    }
+    
+    temp <- rbind(temp, t)
+    
+  }
+  pred$Peptide_map <- "Predicted"
+  temp <- rbind(temp, pred)
+
+  return(temp)
+  
+}
+```
+
+\-
+
+\-
+
+#### Apply the functions to the identified peptides
+
+```{r message=FALSE, warning=FALSE}
+#apply the functions
+df <- blast_map(database = db, 
+                proteins = prot,
+                peptides = IDs)
+
+
+df2 <- blast_categorize(df)
+```
+
+```{r echo=FALSE}
+df2 %>% 
+  filter(Peptide_map != "Predicted") %>% 
+  select(QueryID, 
+         QuerySeq,
+         "% identity" = pident,
+         length, 
+         mismatch,
+         gapopen,
+         evalue, 
+         Peptide_map) %>% 
+knitr::kable(., "simple")
+```
