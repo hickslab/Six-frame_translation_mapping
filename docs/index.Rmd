@@ -214,17 +214,17 @@ full_db <- six_frame_translate(fasta_file = "../genome_sample.fasta",
 ```{r}
 ##### write the fasta file from the data frame #####
 
-Xfasta <- character(nrow(sec_db) * 2)
-Xfasta[c(TRUE, FALSE)] <- paste0(">", sec_db$Accession)
-Xfasta[c(FALSE, TRUE)] <- sec_db$Sequence
+#Xfasta <- character(nrow(sec_db) * 2)
+#Xfasta[c(TRUE, FALSE)] <- paste0(">", sec_db$Accession)
+#Xfasta[c(FALSE, TRUE)] <- sec_db$Sequence
 
-writeLines(Xfasta, "../sec_db.fasta")
+#writeLines(Xfasta, "../sec_db.fasta")
 
-Xfasta2 <- character(nrow(full_db) * 2)
-Xfasta2[c(TRUE, FALSE)] <- paste0(">", full_db$Accession)
-Xfasta2[c(FALSE, TRUE)] <- full_db$Sequence
+#Xfasta2 <- character(nrow(full_db) * 2)
+#Xfasta2[c(TRUE, FALSE)] <- paste0(">", full_db$Accession)
+#Xfasta2[c(FALSE, TRUE)] <- full_db$Sequence
 
-writeLines(Xfasta2, "../full_db.fasta")
+#writeLines(Xfasta2, "../full_db.fasta")
 ```
 
 \-
@@ -246,7 +246,7 @@ library(rBLAST)
 
 ```{r message=FALSE, warning=FALSE}
 #make the full translation the BLAST database
-makeblastdb(file = "../full_db.fasta", dbtype = "prot")
+#makeblastdb(file = "../full_db.fasta", dbtype = "prot")
 
 db <- blast(db = "../full_db.fasta", type = "blastp")
 
@@ -260,6 +260,8 @@ IDs <- readAAStringSet("../pep_IDs.fasta")
 \-
 
 \-
+
+#### Define the functions for mapping and categorizing
 
 ```{r message=FALSE, warning=FALSE}
 ##### define the functions #####

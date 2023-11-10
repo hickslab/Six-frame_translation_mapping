@@ -564,17 +564,17 @@ full_db &lt;- six_frame_translate(fasta_file = &quot;../genome_sample.fasta&quot
 <h4>Output the databases as fasta files</h4>
 <pre class="r"><code>##### write the fasta file from the data frame #####
 
-Xfasta &lt;- character(nrow(sec_db) * 2)
-Xfasta[c(TRUE, FALSE)] &lt;- paste0(&quot;&gt;&quot;, sec_db$Accession)
-Xfasta[c(FALSE, TRUE)] &lt;- sec_db$Sequence
+#Xfasta &lt;- character(nrow(sec_db) * 2)
+#Xfasta[c(TRUE, FALSE)] &lt;- paste0(&quot;&gt;&quot;, sec_db$Accession)
+#Xfasta[c(FALSE, TRUE)] &lt;- sec_db$Sequence
 
-writeLines(Xfasta, &quot;../sec_db.fasta&quot;)
+#writeLines(Xfasta, &quot;../sec_db.fasta&quot;)
 
-Xfasta2 &lt;- character(nrow(full_db) * 2)
-Xfasta2[c(TRUE, FALSE)] &lt;- paste0(&quot;&gt;&quot;, full_db$Accession)
-Xfasta2[c(FALSE, TRUE)] &lt;- full_db$Sequence
+#Xfasta2 &lt;- character(nrow(full_db) * 2)
+#Xfasta2[c(TRUE, FALSE)] &lt;- paste0(&quot;&gt;&quot;, full_db$Accession)
+#Xfasta2[c(FALSE, TRUE)] &lt;- full_db$Sequence
 
-writeLines(Xfasta2, &quot;../full_db.fasta&quot;)</code></pre>
+#writeLines(Xfasta2, &quot;../full_db.fasta&quot;)</code></pre>
 <p>-</p>
 <p>-</p>
 </div>
@@ -589,9 +589,9 @@ library(rBLAST)</code></pre>
 <h4>Define the full translation as the BLAST database, read in the
 predicted proteins and identified peptides</h4>
 <pre class="r"><code>#make the full translation the BLAST database
-makeblastdb(file = &quot;../full_db.fasta&quot;, dbtype = &quot;prot&quot;)</code></pre>
-<pre><code>## [1] 0</code></pre>
-<pre class="r"><code>db &lt;- blast(db = &quot;../full_db.fasta&quot;, type = &quot;blastp&quot;)
+#makeblastdb(file = &quot;../full_db.fasta&quot;, dbtype = &quot;prot&quot;)
+
+db &lt;- blast(db = &quot;../full_db.fasta&quot;, type = &quot;blastp&quot;)
 
 #read in the protein sequences
 prot &lt;- readAAStringSet(&quot;../protein_NCBI.fasta&quot;)
@@ -600,6 +600,9 @@ prot &lt;- readAAStringSet(&quot;../protein_NCBI.fasta&quot;)
 IDs &lt;- readAAStringSet(&quot;../pep_IDs.fasta&quot;)</code></pre>
 <p>-</p>
 <p>-</p>
+</div>
+<div id="define-the-functions-for-mapping-and-categorizing" class="section level4">
+<h4>Define the functions for mapping and categorizing</h4>
 <pre class="r"><code>##### define the functions #####
 
 ##### define the function to map peptides and proteins to the global translation #####
