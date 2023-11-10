@@ -345,7 +345,7 @@ blast_categorize <- function(data = df)
     } else if (t$sstart < p$sstart & t$send > p$sstart){
       t$Peptide_map <- "ncStart"
     } else if (t$sstart >= p$sstart & t$send < p$send){
-      t$Peptide_map <- "Intragenic"
+      t$Peptide_map <- paste(p$QueryID)
     } else if (t$sstart < p$send & t$send > p$send) {
       t$Peptide_map <- "ncStop"
     } else if (t$sstart < p$sstart & t$send > p$send){

@@ -684,7 +684,7 @@ blast_categorize &lt;- function(data = df)
     } else if (t$sstart &lt; p$sstart &amp; t$send &gt; p$sstart){
       t$Peptide_map &lt;- &quot;ncStart&quot;
     } else if (t$sstart &gt;= p$sstart &amp; t$send &lt; p$send){
-      t$Peptide_map &lt;- &quot;Intragenic&quot;
+      t$Peptide_map &lt;- paste(p$QueryID)
     } else if (t$sstart &lt; p$send &amp; t$send &gt; p$send) {
       t$Peptide_map &lt;- &quot;ncStop&quot;
     } else if (t$sstart &lt; p$sstart &amp; t$send &gt; p$send){
@@ -746,7 +746,7 @@ df2 &lt;- blast_categorize(df)</code></pre>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">5.00e-07</td>
-<td align="left">Intragenic</td>
+<td align="left">Prot1</td>
 </tr>
 <tr class="odd">
 <td align="left">pepC</td>
@@ -756,7 +756,7 @@ df2 &lt;- blast_categorize(df)</code></pre>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0.00e+00</td>
-<td align="left">Intragenic</td>
+<td align="left">Prot2</td>
 </tr>
 <tr class="even">
 <td align="left">pepD</td>
@@ -776,7 +776,7 @@ df2 &lt;- blast_categorize(df)</code></pre>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0.00e+00</td>
-<td align="left">Intragenic</td>
+<td align="left">Prot2</td>
 </tr>
 <tr class="even">
 <td align="left">pepF</td>
@@ -786,7 +786,7 @@ df2 &lt;- blast_categorize(df)</code></pre>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">1.00e-07</td>
-<td align="left">Intragenic</td>
+<td align="left">Prot5</td>
 </tr>
 <tr class="odd">
 <td align="left">pepG</td>
@@ -796,7 +796,7 @@ df2 &lt;- blast_categorize(df)</code></pre>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0.00e+00</td>
-<td align="left">Intragenic</td>
+<td align="left">Prot5</td>
 </tr>
 <tr class="even">
 <td align="left">pepH</td>
@@ -806,7 +806,7 @@ df2 &lt;- blast_categorize(df)</code></pre>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0.00e+00</td>
-<td align="left">Intragenic</td>
+<td align="left">Prot5</td>
 </tr>
 <tr class="odd">
 <td align="left">pepI</td>
@@ -816,7 +816,7 @@ df2 &lt;- blast_categorize(df)</code></pre>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">1.30e-06</td>
-<td align="left">Intragenic</td>
+<td align="left">Prot6</td>
 </tr>
 <tr class="even">
 <td align="left">pepJ</td>
@@ -846,7 +846,7 @@ df2 &lt;- blast_categorize(df)</code></pre>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">3.30e-02</td>
-<td align="left">Intragenic</td>
+<td align="left">Prot2</td>
 </tr>
 <tr class="odd">
 <td align="left">pepM</td>
@@ -866,7 +866,7 @@ df2 &lt;- blast_categorize(df)</code></pre>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">1.83e-05</td>
-<td align="left">Intragenic</td>
+<td align="left">Prot1</td>
 </tr>
 <tr class="odd">
 <td align="left">pepO</td>
